@@ -12,6 +12,8 @@ import {
   CheckCircle,
   FileSearch,
   XCircle,
+  Sparkles,
+  FlaskConical,
 } from "lucide-react";
 import { AnalysisResult, getVerdictLabel, getVerdictColor } from "@/lib/analyzer";
 import { saveToHistory, generateReport } from "@/lib/storage";
@@ -219,40 +221,54 @@ export function ResultsDisplay({ result, onNewScan }: ResultsDisplayProps) {
             </div>
           </div>
 
-          <div className="pt-6 border-t border-slate-100 dark:border-slate-700">
-            <div className="flex items-center gap-2 mb-3">
-              <FileSearch className="w-5 h-5 text-slate-400 dark:text-slate-500" />
-              <h4 className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                Plagiarism Check
-              </h4>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex-1 h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${result.plagiarismScore}%` }}
-                  transition={{ duration: 1, delay: 0.8 }}
-                  className={`h-full rounded-full ${
-                    result.plagiarismScore < 20
-                      ? "bg-success"
-                      : result.plagiarismScore < 50
-                      ? "bg-warning"
-                      : "bg-danger"
-                  }`}
-                />
+          {result.plagiarismScore > 0 ? (
+            <div className="pt-6 border-t border-slate-100 dark:border-slate-700">
+              <div className="flex items-center gap-2 mb-3">
+                <FileSearch className="w-5 h-5 text-slate-400 dark:text-slate-500" />
+                <h4 className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  Plagiarism Check
+                </h4>
               </div>
-              <span className="text-lg font-bold text-slate-900 dark:text-white min-w-[3rem]">
-                {result.plagiarismScore}%
-              </span>
+              <div className="flex items-center gap-4">
+                <div className="flex-1 h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${result.plagiarismScore}%` }}
+                    transition={{ duration: 1, delay: 0.8 }}
+                    className={`h-full rounded-full ${
+                      result.plagiarismScore < 20
+                        ? "bg-success"
+                        : result.plagiarismScore < 50
+                        ? "bg-warning"
+                        : "bg-danger"
+                    }`}
+                  />
+                </div>
+                <span className="text-lg font-bold text-slate-900 dark:text-white min-w-[3rem]">
+                  {result.plagiarismScore}%
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                {result.plagiarismScore < 20
+                  ? "Low plagiarism risk — content appears original"
+                  : result.plagiarismScore < 50
+                  ? "Moderate similarity — review recommended"
+                  : "High similarity detected — significant overlap with known sources"}
+              </p>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-              {result.plagiarismScore < 20
-                ? "Low plagiarism risk — content appears original"
-                : result.plagiarismScore < 50
-                ? "Moderate similarity — review recommended"
-                : "High similarity detected — significant overlap with known sources"}
-            </p>
-          </div>
+          ) : (
+            <div className="pt-6 border-t border-slate-100 dark:border-slate-700">
+              <div className="flex items-center gap-2 mb-3">
+                <FileSearch className="w-5 h-5 text-slate-400 dark:text-slate-500" />
+                <h4 className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  Plagiarism Check
+                </h4>
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Plagiarism checking is not available with the current detection engine.
+              </p>
+            </div>
+          )}
         </motion.div>
       </div>
 
@@ -293,18 +309,31 @@ export function ResultsDisplay({ result, onNewScan }: ResultsDisplayProps) {
         </button>
       </motion.div>
 
-      {isSaved && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center text-sm text-slate-500 dark:text-slate-400"
-        >
-          Result automatically saved to{" "}
-          <a href="/history" className="text-primary hover:underline">
-            your history
-          </a>
-        </motion.div>
-      )}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="text-center space-y-2"
+      >
+        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border" style={{
+          backgroundColor: result.isDemo ? '#F59E0B10' : '#10B98110',
+          borderColor: result.isDemo ? '#F59E0B30' : '#10B98130',
+          color: result.isDemo ? '#F59E0B' : '#10B981',
+        }}>
+          {result.isDemo ? (
+            <><FlaskConical className="w-3 h-3" /> Demo Mode</>
+          ) : (
+            <><Sparkles className="w-3 h-3" /> Powered by Sapling AI</>
+          )}
+        </div>
+        {isSaved && (
+          <div className="text-sm text-slate-500 dark:text-slate-400">
+            Result automatically saved to{" "}
+            <a href="/history" className="text-primary hover:underline">
+              your history
+            </a>
+          </div>
+        )}
+      </motion.div>
     </motion.div>
   );
 }

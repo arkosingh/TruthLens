@@ -37,7 +37,10 @@ export function getHistory(): HistoryItem[] {
     if (!stored) return [];
     
     const parsed = JSON.parse(stored) as HistoryItem[];
-    return parsed;
+    return parsed.map((item) => ({
+      ...item,
+      isDemo: item.isDemo ?? true,
+    }));
   } catch (error) {
     console.error("Failed to get history:", error);
     return [];
@@ -91,14 +94,20 @@ export function exportHistoryAsJSON(): string {
 
 export function generateReport(result: AnalysisResult): string {
   const date = new Date(result.scanDate).toLocaleString();
+  const mode = result.isDemo ? "Demo Mode (Simulated)" : "Sapling AI";
   
+  const plagiarismLine = result.plagiarismScore > 0
+    ? `Plagiarism Score: ${result.plagiarismScore}%`
+    : "Plagiarism Score: N/A";
+
   return `TRUTHLENS ANALYSIS REPORT
 Generated: ${date}
+Detection Engine: ${mode}
 
 === OVERALL ASSESSMENT ===
 Verdict: ${result.verdict.toUpperCase()}
 AI Probability: ${result.overallScore}%
-Plagiarism Score: ${result.plagiarismScore}%
+${plagiarismLine}
 
 === TEXT STATISTICS ===
 Word Count: ${result.wordCount}

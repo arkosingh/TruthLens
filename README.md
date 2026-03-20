@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TruthLens — AI Content Detector
+
+TruthLens is a Next.js application that detects AI-generated content with sentence-level precision. It uses [Sapling AI](https://sapling.ai) for real detection, with a built-in demo mode when no API key is configured.
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Setting Up Real AI Detection
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+TruthLens uses [Sapling AI](https://sapling.ai) for real AI content detection. Without an API key, the app runs in **demo mode** with simulated results.
+
+### Get Your Free API Key
+
+1. Go to [sapling.ai](https://sapling.ai) and create a free account
+2. Navigate to your dashboard → API Keys
+3. Copy your API key
+
+### Configure
+
+1. Copy the example env file:
+   ```bash
+   cp .env.local.example .env.local
+   ```
+2. Add your key to `.env.local`:
+   ```
+   SAPLING_API_KEY=your_key_here
+   ```
+3. Restart the dev server:
+   ```bash
+   npm run dev
+   ```
+
+### Free Tier Limits
+
+- The free tier includes a generous monthly quota
+- If no API key is configured, TruthLens runs in demo mode with simulated results
+- Max input per request: 200,000 characters
+
+### Deploy on Vercel
+
+Add `SAPLING_API_KEY` as an environment variable in your Vercel project settings.
+
+## Tech Stack
+
+- [Next.js](https://nextjs.org) (App Router)
+- [Tailwind CSS](https://tailwindcss.com)
+- [Framer Motion](https://www.framer.com/motion/)
+- [Sapling AI API](https://sapling.ai/docs) for AI detection
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Sapling AI Documentation](https://sapling.ai/docs)
