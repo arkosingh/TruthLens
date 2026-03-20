@@ -31,20 +31,35 @@ export function ScoreRing({
   };
 
   const color = getColor();
+  const shadowSize = Math.max(20, (score / 100) * 60);
 
   return (
-    <div className="relative" style={{ width: size, height: size }}>
-      <svg width={size} height={size} className="transform -rotate-90">
-        {/* Background circle */}
+    <motion.div
+      className="relative"
+      style={{ width: size, height: size, perspective: 800 }}
+      initial={{ rotateY: -15 }}
+      animate={{ rotateY: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+    >
+      <div
+        className="absolute rounded-full blur-2xl opacity-30 dark:opacity-40"
+        style={{
+          inset: `${30 - shadowSize / 4}%`,
+          backgroundColor: color,
+          transition: "all 0.5s ease",
+        }}
+      />
+
+      <svg width={size} height={size} className="transform -rotate-90 relative z-10">
         <circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="#E2E8F0"
+          stroke="currentColor"
           strokeWidth={strokeWidth}
+          className="text-slate-200 dark:text-slate-700"
         />
-        {/* Progress circle */}
         <motion.circle
           cx={size / 2}
           cy={size / 2}
@@ -57,10 +72,13 @@ export function ScoreRing({
           initial={{ strokeDashoffset: circumference }}
           animate={{ strokeDashoffset: offset }}
           transition={{ duration: 1.5, ease: "easeOut" }}
+          style={{
+            filter: `drop-shadow(0 0 ${shadowSize / 4}px ${color}40)`,
+          }}
         />
       </svg>
-      {/* Center content */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
+
+      <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
         <motion.span
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -70,8 +88,8 @@ export function ScoreRing({
         >
           {score}%
         </motion.span>
-        <span className="text-xs text-slate-400 mt-1">AI Probability</span>
+        <span className="text-xs text-slate-400 dark:text-slate-500 mt-1">AI Probability</span>
       </div>
-    </div>
+    </motion.div>
   );
 }

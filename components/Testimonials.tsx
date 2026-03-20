@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Quote, Star, Building2, GraduationCap, PenTool, Newspaper } from "lucide-react";
+import { TiltCard } from "./TiltCard";
 
 const testimonials = [
   {
@@ -66,9 +67,8 @@ const itemVariants = {
 
 export function Testimonials() {
   return (
-    <section className="py-20 lg:py-32 bg-white overflow-hidden">
+    <section className="py-20 lg:py-32 bg-white dark:bg-slate-900 overflow-hidden transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -76,23 +76,22 @@ export function Testimonials() {
           transition={{ duration: 0.6 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-sm font-medium text-primary mb-4">
+          <span className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 dark:bg-primary/20 rounded-full text-sm font-medium text-primary mb-4">
             <Star className="w-4 h-4 fill-current" />
             Trusted Worldwide
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-4">
             Loved by{" "}
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               Professionals
             </span>
           </h2>
-          <p className="text-lg text-slate-600">
+          <p className="text-lg text-slate-600 dark:text-slate-300">
             Join thousands of educators, publishers, and content creators who rely
             on TruthLens daily.
           </p>
         </motion.div>
 
-        {/* Testimonials Grid */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -101,51 +100,45 @@ export function Testimonials() {
           className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20"
         >
           {testimonials.map((testimonial) => (
-            <motion.div
-              key={testimonial.author}
-              variants={itemVariants}
-              whileHover={{ y: -5 }}
-              className="relative bg-gradient-to-br from-slate-50 to-white rounded-2xl p-8 border border-slate-200 hover:border-primary/20 hover:shadow-xl transition-all duration-300"
-            >
-              {/* Quote Icon */}
-              <div className="absolute -top-4 left-8 w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
-                <Quote className="w-4 h-4 text-white" />
-              </div>
+            <motion.div key={testimonial.author} variants={itemVariants}>
+              <TiltCard className="h-full" tiltMaxAngle={6} glareEnable={true}>
+                <div className="relative h-full bg-gradient-to-br from-slate-50 to-white dark:from-slate-800/70 dark:to-slate-800/50 backdrop-blur-xl rounded-2xl p-8 border border-slate-200 dark:border-slate-700/50 hover:border-primary/20 dark:hover:border-primary/30 hover:shadow-xl dark:hover:shadow-primary/5 transition-all duration-300">
+                  <div className="absolute -top-4 left-8 w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
+                    <Quote className="w-4 h-4 text-white" />
+                  </div>
 
-              {/* Rating */}
-              <div className="flex gap-1 mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className="w-4 h-4 fill-amber-400 text-amber-400"
-                  />
-                ))}
-              </div>
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="w-4 h-4 fill-amber-400 text-amber-400"
+                      />
+                    ))}
+                  </div>
 
-              {/* Quote */}
-              <p className="text-slate-700 leading-relaxed mb-6">
-                &ldquo;{testimonial.quote}&rdquo;
-              </p>
-
-              {/* Author */}
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full flex items-center justify-center">
-                  <testimonial.icon className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <p className="font-semibold text-slate-900">
-                    {testimonial.author}
+                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-6">
+                    &ldquo;{testimonial.quote}&rdquo;
                   </p>
-                  <p className="text-sm text-slate-500">
-                    {testimonial.role}, {testimonial.company}
-                  </p>
+
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full flex items-center justify-center">
+                      <testimonial.icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-900 dark:text-white">
+                        {testimonial.author}
+                      </p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">
+                        {testimonial.role}, {testimonial.company}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </TiltCard>
             </motion.div>
           ))}
         </motion.div>
 
-        {/* Trusted By Section */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -153,20 +146,19 @@ export function Testimonials() {
           transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <p className="text-sm font-medium text-slate-400 uppercase tracking-wider mb-8">
+          <p className="text-sm font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-8">
             Trusted by leading institutions
           </p>
 
-          {/* Logo Marquee */}
           <div className="relative overflow-hidden">
             <div className="flex gap-12 animate-marquee">
               {[...trustedBy, ...trustedBy].map((org, index) => (
                 <div
                   key={`${org.name}-${index}`}
-                  className="flex items-center gap-3 px-6 py-3 bg-slate-50 rounded-lg flex-shrink-0"
+                  className="flex items-center gap-3 px-6 py-3 bg-slate-50 dark:bg-slate-800/70 rounded-lg flex-shrink-0 border border-transparent dark:border-slate-700/30"
                 >
-                  <org.icon className="w-5 h-5 text-slate-400" />
-                  <span className="text-slate-600 font-medium whitespace-nowrap">
+                  <org.icon className="w-5 h-5 text-slate-400 dark:text-slate-500" />
+                  <span className="text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">
                     {org.name}
                   </span>
                 </div>

@@ -18,7 +18,7 @@ interface TextInputProps {
   disabled?: boolean;
 }
 
-const MAX_FILE_SIZE = 1024 * 1024; // 1MB
+const MAX_FILE_SIZE = 1024 * 1024;
 
 export function TextInput({
   value,
@@ -44,9 +44,7 @@ export function TextInput({
         return;
       }
 
-      // Only process .txt files
       if (!file.name.endsWith(".txt")) {
-        // Show tooltip for unsupported formats
         setTooltipVisible(true);
         if (tooltipTimeoutRef.current) {
           clearTimeout(tooltipTimeoutRef.current);
@@ -135,9 +133,8 @@ export function TextInput({
 
   return (
     <div className="space-y-4">
-      {/* Sample Chips */}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-sm text-slate-500 mr-1">Try an example:</span>
+        <span className="text-sm text-slate-500 dark:text-slate-400 mr-1">Try an example:</span>
         {sampleTexts.map((sample) => (
           <motion.button
             key={sample.id}
@@ -145,28 +142,26 @@ export function TextInput({
             whileTap={{ scale: 0.98 }}
             onClick={() => loadSample(sample.id)}
             disabled={disabled}
-            className="px-3 py-1.5 text-sm font-medium bg-white border border-slate-200 rounded-lg text-slate-600 hover:border-primary hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 text-sm font-medium bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-600 dark:text-slate-300 hover:border-primary hover:text-primary dark:hover:border-primary dark:hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {sample.label}
           </motion.button>
         ))}
       </div>
 
-      {/* Text Area Container */}
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         className={`relative group ${isDragging ? "ring-2 ring-primary" : ""}`}
       >
-        {/* Drop Zone Overlay */}
         <AnimatePresence>
           {isDragging && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 z-10 bg-primary/10 backdrop-blur-sm rounded-2xl flex items-center justify-center border-2 border-dashed border-primary"
+              className="absolute inset-0 z-10 bg-primary/10 dark:bg-primary/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border-2 border-dashed border-primary"
             >
               <div className="text-center">
                 <Upload className="w-12 h-12 text-primary mx-auto mb-2" />
@@ -178,21 +173,18 @@ export function TextInput({
           )}
         </AnimatePresence>
 
-        {/* Text Area */}
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value.slice(0, maxLength))}
           onPaste={handlePaste}
           disabled={disabled}
           placeholder="Paste your text here to check for AI-generated content..."
-          className={`w-full min-h-[300px] p-6 bg-white border rounded-2xl resize-y focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-700 placeholder:text-slate-400 ${
-            isOverLimit ? "border-danger focus:border-danger" : "border-slate-200"
+          className={`w-full min-h-[300px] p-6 bg-white dark:bg-slate-800 border rounded-2xl resize-y focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 ${
+            isOverLimit ? "border-danger focus:border-danger" : "border-slate-200 dark:border-slate-700"
           } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
         />
 
-        {/* Floating Action Buttons */}
         <div className="absolute top-4 right-4 flex items-center gap-2">
-          {/* File Upload Button */}
           <div className="relative">
             <input
               ref={fileInputRef}
@@ -201,7 +193,7 @@ export function TextInput({
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) handleFileUpload(file);
-                e.target.value = ""; // Reset input
+                e.target.value = "";
               }}
               className="hidden"
             />
@@ -210,28 +202,26 @@ export function TextInput({
               whileTap={{ scale: 0.95 }}
               onClick={() => fileInputRef.current?.click()}
               disabled={disabled}
-              className="p-2 rounded-lg bg-slate-50 text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors border border-slate-200 disabled:opacity-50"
+              className="p-2 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors border border-slate-200 dark:border-slate-600 disabled:opacity-50"
             >
               <FileUp className="w-5 h-5" />
             </motion.button>
 
-            {/* Tooltip */}
             <AnimatePresence>
               {tooltipVisible && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-full right-0 mt-2 px-3 py-2 bg-slate-800 text-white text-xs rounded-lg whitespace-nowrap z-20"
+                  className="absolute top-full right-0 mt-2 px-3 py-2 bg-slate-800 dark:bg-slate-700 text-white text-xs rounded-lg whitespace-nowrap z-20"
                 >
                   .pdf & .docx coming soon!
-                  <div className="absolute -top-1 right-3 w-2 h-2 bg-slate-800 rotate-45" />
+                  <div className="absolute -top-1 right-3 w-2 h-2 bg-slate-800 dark:bg-slate-700 rotate-45" />
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
-          {/* Clear Button */}
           {value && (
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
@@ -241,14 +231,13 @@ export function TextInput({
               whileTap={{ scale: 0.95 }}
               onClick={clearText}
               disabled={disabled}
-              className="p-2 rounded-lg bg-slate-50 text-slate-500 hover:text-danger hover:bg-danger/10 transition-colors border border-slate-200 disabled:opacity-50"
+              className="p-2 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-danger hover:bg-danger/10 transition-colors border border-slate-200 dark:border-slate-600 disabled:opacity-50"
             >
               <X className="w-5 h-5" />
             </motion.button>
           )}
         </div>
 
-        {/* Error Message */}
         <AnimatePresence>
           {uploadError && (
             <motion.div
@@ -264,11 +253,10 @@ export function TextInput({
         </AnimatePresence>
       </div>
 
-      {/* Character Count */}
       <div className="flex items-center justify-between text-sm">
         <div className="flex items-center gap-2">
-          <FileText className="w-4 h-4 text-slate-400" />
-          <span className="text-slate-500">
+          <FileText className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+          <span className="text-slate-500 dark:text-slate-400">
             {characterCount.toLocaleString()} / {maxLength.toLocaleString()} characters
           </span>
         </div>
