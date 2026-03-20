@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ScanSearch, Sparkles } from "lucide-react";
+import { ScanSearch, Sparkles, Info } from "lucide-react";
 import { TextInput } from "@/components/TextInput";
 import { ScanButton } from "@/components/ScanButton";
 import { ResultsDisplay } from "@/components/ResultsDisplay";
@@ -13,6 +13,7 @@ export default function ScanPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isDemo, setIsDemo] = useState(false);
   const inputRef = useRef<HTMLDivElement>(null);
 
   const handleScan = useCallback(async () => {
@@ -25,8 +26,10 @@ export default function ScanPage() {
     try {
       const analysisResult = await analyzeText(text.trim());
       setResult(analysisResult);
+      setIsDemo(analysisResult.isDemo);
     } catch (err) {
-      setError("An error occurred during analysis. Please try again.");
+      const message = err instanceof Error ? err.message : "An error occurred during analysis. Please try again.";
+      setError(message);
       console.error("Analysis error:", err);
     } finally {
       setIsAnalyzing(false);
@@ -36,12 +39,13 @@ export default function ScanPage() {
   const handleNewScan = useCallback(() => {
     setResult(null);
     setError(null);
+    setIsDemo(false);
     setText("");
     inputRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
   const isTextEmpty = text.trim().length === 0;
-  const isTextTooLong = text.length > 10000;
+  const isTextTooLong = text.length > 200000;
 
   return (
     <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-sky-50 to-blue-50/50 dark:from-slate-900 dark:to-slate-800 transition-colors">
@@ -77,7 +81,7 @@ export default function ScanPage() {
           <TextInput
             value={text}
             onChange={setText}
-            maxLength={10000}
+            maxLength={200000}
             disabled={isAnalyzing}
           />
 
@@ -94,10 +98,35 @@ export default function ScanPage() {
             )}
           </AnimatePresence>
 
+          <AnimatePresence>
+            {isDemo && !result && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/40 rounded-xl text-sm flex items-start gap-2"
+              >
+                <Info className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                <span className="text-amber-700 dark:text-amber-300">
+                  Running in demo mode with simulated results.{" "}
+                  <a
+                    href="https://sapling.ai"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-amber-900 dark:hover:text-amber-100"
+                  >
+                    Get a free Sapling API key
+                  </a>{" "}
+                  for real AI detection.
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
               <Sparkles className="w-4 h-4 text-accent" />
-              <span>Analysis takes ~2 seconds</span>
+              <span>Analysis takes a few seconds</span>
             </div>
             <ScanButton
               onClick={handleScan}
