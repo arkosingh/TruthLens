@@ -7,6 +7,15 @@
   --foreground: #0F172A;
 }
 
+.dark {
+  --background: #0B1121;
+  --foreground: #E2E8F0;
+}
+
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 @layer base {
   body {
     color: var(--foreground);
@@ -18,13 +27,13 @@
   .text-balance {
     text-wrap: balance;
   }
-  
+
   .gradient-text {
     @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
   }
-  
+
   .glass-effect {
-    @apply bg-white/80 backdrop-blur-md border border-white/20;
+    @apply bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border border-white/20 dark:border-slate-700/50;
   }
 }
 
@@ -35,7 +44,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #F0F9FF;
+  background: var(--background);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -55,5 +64,6 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transform: none !important;
   }
 }

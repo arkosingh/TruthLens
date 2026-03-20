@@ -22,26 +22,23 @@ export function SentenceHighlight({ text, sentences }: SentenceHighlightProps) {
     setMousePos({ x: e.clientX, y: e.clientY });
   };
 
-  // Build the highlighted text by iterating through sentences
   const renderHighlightedText = () => {
     if (sentences.length === 0) {
-      return <span className="text-slate-700">{text}</span>;
+      return <span className="text-slate-700 dark:text-slate-300">{text}</span>;
     }
 
     const elements: JSX.Element[] = [];
     let currentIndex = 0;
 
     sentences.forEach((sentence, index) => {
-      // Add any text before this sentence
       if (sentence.startIndex > currentIndex) {
         elements.push(
-          <span key={`before-${index}`} className="text-slate-700">
+          <span key={`before-${index}`} className="text-slate-700 dark:text-slate-300">
             {text.slice(currentIndex, sentence.startIndex)}
           </span>
         );
       }
 
-      // Add the highlighted sentence
       const color = getProbabilityColor(sentence.aiProbability);
       const opacity = Math.max(0.1, sentence.aiProbability * 0.3);
 
@@ -68,10 +65,9 @@ export function SentenceHighlight({ text, sentences }: SentenceHighlightProps) {
       currentIndex = sentence.endIndex;
     });
 
-    // Add any remaining text after the last sentence
     if (currentIndex < text.length) {
       elements.push(
-        <span key="after" className="text-slate-700">
+        <span key="after" className="text-slate-700 dark:text-slate-300">
           {text.slice(currentIndex)}
         </span>
       );
@@ -82,29 +78,26 @@ export function SentenceHighlight({ text, sentences }: SentenceHighlightProps) {
 
   return (
     <div className="relative">
-      {/* Legend */}
-      <div className="flex flex-wrap items-center gap-4 mb-4 p-4 bg-slate-50 rounded-xl">
-        <span className="text-sm font-medium text-slate-700">AI Probability:</span>
+      <div className="flex flex-wrap items-center gap-4 mb-4 p-4 bg-slate-50 dark:bg-slate-800/70 rounded-xl">
+        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">AI Probability:</span>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded bg-success/20 border border-success" />
-          <span className="text-sm text-slate-600">Low (&lt;30%)</span>
+          <span className="text-sm text-slate-600 dark:text-slate-400">Low (&lt;30%)</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded bg-warning/20 border border-warning" />
-          <span className="text-sm text-slate-600">Medium (30-70%)</span>
+          <span className="text-sm text-slate-600 dark:text-slate-400">Medium (30-70%)</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded bg-danger/20 border border-danger" />
-          <span className="text-sm text-slate-600">High (&gt;70%)</span>
+          <span className="text-sm text-slate-600 dark:text-slate-400">High (&gt;70%)</span>
         </div>
       </div>
 
-      {/* Highlighted Text */}
-      <div className="p-6 bg-white border border-slate-200 rounded-2xl leading-relaxed text-slate-800">
+      <div className="p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl leading-relaxed text-slate-800 dark:text-slate-200">
         {renderHighlightedText()}
       </div>
 
-      {/* Tooltip */}
       <AnimatePresence>
         {hoveredSentence && (
           <motion.div
@@ -118,16 +111,15 @@ export function SentenceHighlight({ text, sentences }: SentenceHighlightProps) {
               transform: "translateX(-50%)",
               zIndex: 50,
             }}
-            className="px-4 py-3 bg-slate-900 text-white text-sm rounded-xl shadow-2xl max-w-xs pointer-events-none"
+            className="px-4 py-3 bg-slate-900 dark:bg-slate-700 text-white text-sm rounded-xl shadow-2xl max-w-xs pointer-events-none"
           >
             <div className="font-medium mb-1">
               {getProbabilityLabel(hoveredSentence.aiProbability)}
             </div>
-            <div className="text-slate-300 text-xs">
+            <div className="text-slate-300 dark:text-slate-400 text-xs">
               &ldquo;{truncateText(hoveredSentence.text, 60)}&rdquo;
             </div>
-            {/* Arrow */}
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45" />
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 dark:bg-slate-700 rotate-45" />
           </motion.div>
         )}
       </AnimatePresence>

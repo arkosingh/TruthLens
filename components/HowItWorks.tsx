@@ -51,9 +51,8 @@ const itemVariants = {
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-20 lg:py-32 bg-slate-50">
+    <section id="how-it-works" className="py-20 lg:py-32 bg-slate-50 dark:bg-slate-800/50 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -61,22 +60,21 @@ export function HowItWorks() {
           transition={{ duration: 0.6 }}
           className="text-center max-w-3xl mx-auto mb-20"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-sm font-medium text-primary mb-4">
+          <span className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 dark:bg-primary/20 rounded-full text-sm font-medium text-primary mb-4">
             Simple Process
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-4">
             How It{" "}
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               Works
             </span>
           </h2>
-          <p className="text-lg text-slate-600">
+          <p className="text-lg text-slate-600 dark:text-slate-300">
             Get accurate AI detection results in seconds with our streamlined
             three-step process.
           </p>
         </motion.div>
 
-        {/* Steps */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -84,7 +82,6 @@ export function HowItWorks() {
           viewport={{ once: true, margin: "-100px" }}
           className="relative"
         >
-          {/* Connector Line (Desktop) */}
           <div className="hidden lg:block absolute top-24 left-[16.67%] right-[16.67%] h-0.5">
             <motion.div
               initial={{ scaleX: 0 }}
@@ -102,25 +99,22 @@ export function HowItWorks() {
                 variants={itemVariants}
                 className="relative text-center"
               >
-                {/* Number Circle */}
                 <div className="relative inline-flex items-center justify-center w-16 h-16 mb-6">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent rounded-full opacity-20" />
-                  <div className="relative z-10 w-14 h-14 bg-white rounded-full shadow-lg shadow-primary/20 flex items-center justify-center border-2 border-primary">
+                  <div className="relative z-10 w-14 h-14 bg-white dark:bg-slate-800 rounded-full shadow-lg shadow-primary/20 flex items-center justify-center border-2 border-primary">
                     <span className="text-lg font-bold text-primary">
                       {step.number}
                     </span>
                   </div>
-                  {/* Icon Badge */}
                   <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center shadow-lg">
                     <step.icon className="w-4 h-4 text-white" />
                   </div>
                 </div>
 
-                {/* Content */}
-                <h3 className="text-xl font-bold text-slate-900 mb-3">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
                   {step.title}
                 </h3>
-                <p className="text-slate-600 leading-relaxed max-w-sm mx-auto">
+                <p className="text-slate-600 dark:text-slate-300 leading-relaxed max-w-sm mx-auto">
                   {step.description}
                 </p>
               </motion.div>

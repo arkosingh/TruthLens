@@ -13,20 +13,17 @@ export default function HistoryPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isClearModalOpen, setIsClearModalOpen] = useState(false);
 
-  // Load history on mount
   useEffect(() => {
     const loaded = getHistory();
     setHistory(loaded);
     setIsLoading(false);
   }, []);
 
-  // Handle delete single item
   const handleDelete = useCallback((id: string) => {
     deleteFromHistory(id);
     setHistory((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
-  // Handle clear all
   const handleClearAll = useCallback(() => {
     setIsClearModalOpen(true);
   }, []);
@@ -48,9 +45,8 @@ export default function HistoryPage() {
   const hasHistory = history.length > 0;
 
   return (
-    <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-sky-50 to-blue-50/50">
+    <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-sky-50 to-blue-50/50 dark:from-slate-900 dark:to-slate-800 transition-colors">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Page Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -61,17 +57,16 @@ export default function HistoryPage() {
             <div className="p-2 bg-gradient-to-br from-primary to-accent rounded-xl">
               <History className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-slate-900">
+            <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white">
               Scan History
             </h1>
           </div>
-          <p className="text-slate-600">
+          <p className="text-slate-600 dark:text-slate-300">
             Review and manage all your previous AI content analyses. Results are
             stored locally in your browser.
           </p>
         </motion.div>
 
-        {/* Content */}
         {hasHistory ? (
           <HistoryList
             history={history}
@@ -82,15 +77,15 @@ export default function HistoryPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center py-20 bg-white rounded-3xl border border-slate-200 shadow-lg"
+            className="text-center py-20 bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-slate-700/50 shadow-lg"
           >
-            <div className="w-20 h-20 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <Search className="w-10 h-10 text-slate-400" />
+            <div className="w-20 h-20 bg-slate-100 dark:bg-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Search className="w-10 h-10 text-slate-400 dark:text-slate-500" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-3">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">
               No scans yet
             </h2>
-            <p className="text-slate-600 mb-8 max-w-md mx-auto">
+            <p className="text-slate-600 dark:text-slate-300 mb-8 max-w-md mx-auto">
               Start your first scan to detect AI-generated content. Your analysis
               history will appear here.
             </p>
@@ -105,7 +100,6 @@ export default function HistoryPage() {
         )}
       </div>
 
-      {/* Clear All Confirmation Modal */}
       <Modal
         isOpen={isClearModalOpen}
         onClose={() => setIsClearModalOpen(false)}
@@ -114,7 +108,7 @@ export default function HistoryPage() {
           <>
             <button
               onClick={() => setIsClearModalOpen(false)}
-              className="px-4 py-2 text-slate-700 font-medium hover:bg-slate-100 rounded-lg transition-colors"
+              className="px-4 py-2 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
             >
               Cancel
             </button>
@@ -128,7 +122,7 @@ export default function HistoryPage() {
           </>
         }
       >
-        <p className="text-slate-600">
+        <p className="text-slate-600 dark:text-slate-300">
           This will permanently delete all {history.length} scans from your
           history. This action cannot be undone.
         </p>

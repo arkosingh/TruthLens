@@ -17,6 +17,7 @@ import { AnalysisResult, getVerdictLabel, getVerdictColor } from "@/lib/analyzer
 import { saveToHistory, generateReport } from "@/lib/storage";
 import { ScoreRing } from "./ScoreRing";
 import { SentenceHighlight } from "./SentenceHighlight";
+import { TiltCard } from "./TiltCard";
 
 interface ResultsDisplayProps {
   result: AnalysisResult;
@@ -27,13 +28,11 @@ export function ResultsDisplay({ result, onNewScan }: ResultsDisplayProps) {
   const resultsRef = useRef<HTMLDivElement>(null);
   const [isSaved, setIsSaved] = useState(false);
 
-  // Auto-save to history
   useEffect(() => {
     saveToHistory(result);
     setIsSaved(true);
   }, [result]);
 
-  // Scroll to results on mount
   useEffect(() => {
     resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
@@ -51,7 +50,6 @@ export function ResultsDisplay({ result, onNewScan }: ResultsDisplayProps) {
     URL.revokeObjectURL(url);
   };
 
-  // Calculate sentence distribution
   const distribution = {
     low: result.sentences.filter((s) => s.aiProbability < 0.3).length,
     medium: result.sentences.filter((s) => s.aiProbability >= 0.3 && s.aiProbability < 0.7).length,
@@ -76,7 +74,6 @@ export function ResultsDisplay({ result, onNewScan }: ResultsDisplayProps) {
       transition={{ duration: 0.6 }}
       className="space-y-8"
     >
-      {/* Results Header */}
       <div className="text-center">
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
@@ -93,94 +90,91 @@ export function ResultsDisplay({ result, onNewScan }: ResultsDisplayProps) {
           {result.verdict === "ai" && <XCircle className="w-4 h-4" />}
           Analysis Complete
         </motion.div>
-        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
+        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
           Your Results Are Ready
         </h2>
       </div>
 
-      {/* Main Results Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Overall Score Card */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-2xl p-8 border border-slate-200 shadow-lg shadow-slate-200/50"
         >
-          <div className="flex flex-col items-center">
-            <ScoreRing score={result.overallScore} verdict={result.verdict} />
+          <TiltCard tiltMaxAngle={5} glareEnable={true}>
+            <div className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl rounded-2xl p-8 border border-white/20 dark:border-slate-700/50 shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50">
+              <div className="flex flex-col items-center">
+                <ScoreRing score={result.overallScore} verdict={result.verdict} />
 
-            <div className="mt-6 text-center">
-              <h3
-                className="text-xl font-bold mb-1"
-                style={{ color: verdictColor }}
-              >
-                {verdictLabel}
-              </h3>
-              <p className="text-slate-500">
-                {result.overallScore}% AI probability detected
-              </p>
-            </div>
-          </div>
+                <div className="mt-6 text-center">
+                  <h3
+                    className="text-xl font-bold mb-1"
+                    style={{ color: verdictColor }}
+                  >
+                    {verdictLabel}
+                  </h3>
+                  <p className="text-slate-500 dark:text-slate-400">
+                    {result.overallScore}% AI probability detected
+                  </p>
+                </div>
+              </div>
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-slate-100">
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-1 text-slate-400 mb-1">
-                <FileText className="w-4 h-4" />
+              <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-slate-100 dark:border-slate-700">
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-1 text-slate-400 dark:text-slate-500 mb-1">
+                    <FileText className="w-4 h-4" />
+                  </div>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                    {result.wordCount.toLocaleString()}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Words</p>
+                </div>
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-1 text-slate-400 dark:text-slate-500 mb-1">
+                    <Clock className="w-4 h-4" />
+                  </div>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                    {result.readingTime}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Reading Time</p>
+                </div>
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-1 text-slate-400 dark:text-slate-500 mb-1">
+                    <AlignLeft className="w-4 h-4" />
+                  </div>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                    {result.sentences.length}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Sentences</p>
+                </div>
               </div>
-              <p className="text-2xl font-bold text-slate-900">
-                {result.wordCount.toLocaleString()}
-              </p>
-              <p className="text-xs text-slate-500">Words</p>
             </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-1 text-slate-400 mb-1">
-                <Clock className="w-4 h-4" />
-              </div>
-              <p className="text-2xl font-bold text-slate-900">
-                {result.readingTime}
-              </p>
-              <p className="text-xs text-slate-500">Reading Time</p>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-1 text-slate-400 mb-1">
-                <AlignLeft className="w-4 h-4" />
-              </div>
-              <p className="text-2xl font-bold text-slate-900">
-                {result.sentences.length}
-              </p>
-              <p className="text-xs text-slate-500">Sentences</p>
-            </div>
-          </div>
+          </TiltCard>
         </motion.div>
 
-        {/* Detailed Breakdown */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-white rounded-2xl p-8 border border-slate-200 shadow-lg shadow-slate-200/50"
+          className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl rounded-2xl p-8 border border-white/20 dark:border-slate-700/50 shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50"
         >
-          <h3 className="text-lg font-bold text-slate-900 mb-6">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6">
             Detailed Breakdown
           </h3>
 
-          {/* Sentence Distribution */}
           <div className="space-y-4 mb-8">
-            <h4 className="text-sm font-medium text-slate-600 mb-3">
+            <h4 className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">
               Sentence Distribution by AI Probability
             </h4>
 
-            {/* Low */}
             <div>
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-slate-600">Low (&lt;30%)</span>
+                <span className="text-slate-600 dark:text-slate-400">Low (&lt;30%)</span>
                 <span className="font-medium text-success">
                   {distributionPercentages.low}%
                 </span>
               </div>
-              <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${distributionPercentages.low}%` }}
@@ -190,15 +184,14 @@ export function ResultsDisplay({ result, onNewScan }: ResultsDisplayProps) {
               </div>
             </div>
 
-            {/* Medium */}
             <div>
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-slate-600">Medium (30-70%)</span>
+                <span className="text-slate-600 dark:text-slate-400">Medium (30-70%)</span>
                 <span className="font-medium text-warning">
                   {distributionPercentages.medium}%
                 </span>
               </div>
-              <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${distributionPercentages.medium}%` }}
@@ -208,15 +201,14 @@ export function ResultsDisplay({ result, onNewScan }: ResultsDisplayProps) {
               </div>
             </div>
 
-            {/* High */}
             <div>
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-slate-600">High (&gt;70%)</span>
+                <span className="text-slate-600 dark:text-slate-400">High (&gt;70%)</span>
                 <span className="font-medium text-danger">
                   {distributionPercentages.high}%
                 </span>
               </div>
-              <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${distributionPercentages.high}%` }}
@@ -227,16 +219,15 @@ export function ResultsDisplay({ result, onNewScan }: ResultsDisplayProps) {
             </div>
           </div>
 
-          {/* Plagiarism Score */}
-          <div className="pt-6 border-t border-slate-100">
+          <div className="pt-6 border-t border-slate-100 dark:border-slate-700">
             <div className="flex items-center gap-2 mb-3">
-              <FileSearch className="w-5 h-5 text-slate-400" />
-              <h4 className="text-sm font-medium text-slate-600">
+              <FileSearch className="w-5 h-5 text-slate-400 dark:text-slate-500" />
+              <h4 className="text-sm font-medium text-slate-600 dark:text-slate-400">
                 Plagiarism Check
               </h4>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div className="flex-1 h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${result.plagiarismScore}%` }}
@@ -250,11 +241,11 @@ export function ResultsDisplay({ result, onNewScan }: ResultsDisplayProps) {
                   }`}
                 />
               </div>
-              <span className="text-lg font-bold text-slate-900 min-w-[3rem]">
+              <span className="text-lg font-bold text-slate-900 dark:text-white min-w-[3rem]">
                 {result.plagiarismScore}%
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-2">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
               {result.plagiarismScore < 20
                 ? "Low plagiarism risk — content appears original"
                 : result.plagiarismScore < 50
@@ -265,22 +256,20 @@ export function ResultsDisplay({ result, onNewScan }: ResultsDisplayProps) {
         </motion.div>
       </div>
 
-      {/* Sentence Highlighting */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
       >
-        <h3 className="text-lg font-bold text-slate-900 mb-4">
+        <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">
           Sentence-by-Sentence Analysis
         </h3>
-        <p className="text-slate-600 mb-4">
+        <p className="text-slate-600 dark:text-slate-300 mb-4">
           Hover over highlighted sentences to see their individual AI probability scores.
         </p>
         <SentenceHighlight text={result.text} sentences={result.sentences} />
       </motion.div>
 
-      {/* Action Buttons */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -289,7 +278,7 @@ export function ResultsDisplay({ result, onNewScan }: ResultsDisplayProps) {
       >
         <button
           onClick={handleDownloadReport}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-700 font-medium rounded-full hover:border-primary hover:text-primary transition-all"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-full hover:border-primary hover:text-primary transition-all"
         >
           <Download className="w-5 h-5" />
           Download Report
@@ -304,12 +293,11 @@ export function ResultsDisplay({ result, onNewScan }: ResultsDisplayProps) {
         </button>
       </motion.div>
 
-      {/* Saved Indicator */}
       {isSaved && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center text-sm text-slate-500"
+          className="text-center text-sm text-slate-500 dark:text-slate-400"
         >
           Result automatically saved to{" "}
           <a href="/history" className="text-primary hover:underline">
