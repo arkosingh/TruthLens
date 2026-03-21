@@ -9,7 +9,7 @@ const steps = [
     icon: FileText,
     title: "Paste Your Text",
     description:
-      "Simply copy and paste the content you want to analyze. Supports up to 10,000 characters per scan for comprehensive analysis.",
+      "Simply copy and paste the content you want to analyze. Supports up to 200,000 characters per scan for comprehensive analysis.",
   },
   {
     number: "02",
@@ -82,7 +82,7 @@ export function HowItWorks() {
           viewport={{ once: true, margin: "-100px" }}
           className="relative"
         >
-          <div className="hidden lg:block absolute top-24 left-[16.67%] right-[16.67%] h-0.5">
+          <div className="hidden lg:block absolute top-8 left-[16.67%] right-[16.67%] h-0.5 -z-0">
             <motion.div
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
@@ -99,7 +99,7 @@ export function HowItWorks() {
                 variants={itemVariants}
                 className="relative text-center"
               >
-                <div className="relative inline-flex items-center justify-center w-16 h-16 mb-6">
+                <div className="relative z-10 inline-flex items-center justify-center w-16 h-16 mb-6">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent rounded-full opacity-20" />
                   <div className="relative z-10 w-14 h-14 bg-white dark:bg-slate-800 rounded-full shadow-lg shadow-primary/20 flex items-center justify-center border-2 border-primary">
                     <span className="text-lg font-bold text-primary">
