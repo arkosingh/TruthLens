@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 :root {
-  --background: #F0F9FF;
-  --foreground: #0F172A;
+  --background: #030712;
+  --foreground: #E2E8F0;
 }
 
 .dark {
-  --background: #0B1121;
+  --background: #030712;
   --foreground: #E2E8F0;
 }
 
@@ -33,34 +33,60 @@ html {
   }
 
   .glass-effect {
-    @apply bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border border-white/20 dark:border-slate-700/50;
+    @apply bg-white/5 backdrop-blur-xl border border-white/10;
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* ── Shimmer headline ─────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
 }
 
-::-webkit-scrollbar-track {
-  background: var(--background);
+.shimmer-text {
+  background: linear-gradient(90deg, #3B82F6, #06B6D4, #8B5CF6, #06B6D4, #3B82F6);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 5s linear infinite;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #3B82F6;
-  border-radius: 4px;
+/* ── 3-D perspective grid floor ──────────────────────── */
+.perspective-grid {
+  transform: rotateX(60deg);
+  transform-origin: top center;
+  width: 100%;
+  height: 400%;
+  background-image:
+    linear-gradient(to right,  rgba(59, 130, 246, 0.18) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(59, 130, 246, 0.18) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: grid-scroll 6s linear infinite;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #2563EB;
+@keyframes grid-scroll {
+  from { background-position: 0 0; }
+  to   { background-position: 0 50px; }
 }
 
-/* Reduced motion support */
+/* ── Neon card border glow on hover ──────────────────── */
+.neon-card {
+  transition: box-shadow 0.35s ease, transform 0.35s ease;
+}
+.neon-card:hover {
+  transform: translateY(-6px);
+}
+
+/* ── Scrollbar ────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #030712; }
+::-webkit-scrollbar-thumb { background: #2563EB; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3B82F6; }
+
+/* ── Reduced motion ───────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

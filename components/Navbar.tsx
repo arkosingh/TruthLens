@@ -35,9 +35,10 @@ export function Navbar() {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-white/90 dark:bg-slate-900/80 backdrop-blur-lg shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50"
+          ? "backdrop-blur-xl shadow-lg shadow-black/50"
           : "bg-transparent"
       }`}
+      style={isScrolled ? { background: "rgba(3,7,18,0.85)", borderBottom: "1px solid rgba(255,255,255,0.06)" } : {}}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
@@ -58,7 +59,7 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="relative py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors"
+                className="relative py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
               >
                 {link.label}
                 {pathname === link.href && (
@@ -78,7 +79,7 @@ export function Navbar() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={toggleTheme}
-              className="relative p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+              className="relative p-2.5 rounded-xl bg-white/8 text-slate-400 hover:bg-white/12 hover:text-white transition-colors border border-white/10"
               aria-label="Toggle theme"
             >
               <AnimatePresence mode="wait" initial={false}>
@@ -144,7 +145,8 @@ export function Navbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800"
+            className="md:hidden border-t border-white/8"
+          style={{ background: "rgba(3,7,18,0.95)", backdropFilter: "blur(20px)" }}
           >
             <div className="px-4 py-4 space-y-2">
               {navLinks.map((link) => (
@@ -154,8 +156,8 @@ export function Navbar() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors ${
                     pathname === link.href
-                      ? "bg-primary/10 text-primary"
-                      : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                      ? "bg-blue-500/15 text-blue-400"
+                      : "text-slate-400 hover:bg-white/8 hover:text-white"
                   }`}
                 >
                   {link.label}
