@@ -275,20 +275,12 @@ export async function analyzeText(text: string): Promise<AnalysisResult> {
       return mockAnalyzeText(text, wordCount, characterCount, readingTime);
     }
 
-    if (response.status === 429) {
-      throw new Error(errorData?.error || "Rate limit exceeded. Please wait a moment and try again.");
-    }
-
-    console.warn("API error, falling back to demo mode:", errorData?.error);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    return mockAnalyzeText(text, wordCount, characterCount, readingTime);
+    throw new Error(errorData?.error || `API error (${response.status}). Please try again.`);
   } catch (err) {
-    if (err instanceof Error && (err.message.includes("Please wait") || err.message.includes("Rate limit"))) {
+    if (err instanceof Error && err.message.includes("Please wait")) {
       throw err;
     }
-    console.warn("API call failed, using demo mode:", err);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    return mockAnalyzeText(text, wordCount, characterCount, readingTime);
+    throw err;
   }
 }
 
