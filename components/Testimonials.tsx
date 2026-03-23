@@ -48,8 +48,8 @@ const trustedBy = [
 
 const slideVariants = {
   enter: (d: number) => ({ x: d > 0 ? 500 : -500, opacity: 0, scale: 0.9 }),
-  center: { x: 0, opacity: 1, scale: 1, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
-  exit:  (d: number) => ({ x: d > 0 ? -500 : 500, opacity: 0, scale: 0.9, transition: { duration: 0.4 } }),
+  center: { x: 0, opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" as const } },
+  exit:  (d: number) => ({ x: d > 0 ? -500 : 500, opacity: 0, scale: 0.9, transition: { duration: 0.4, ease: "easeIn" as const } }),
 };
 
 export function Testimonials() {
