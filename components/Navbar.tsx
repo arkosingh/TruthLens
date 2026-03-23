@@ -4,26 +4,21 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ScanSearch, Menu, X, Sun, Moon } from "lucide-react";
-import { useTheme } from "./ThemeProvider";
+import { ScanSearch, Menu, X } from "lucide-react";
 
 const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/scan", label: "Scanner" },
+  { href: "/",        label: "Home"    },
+  { href: "/scan",    label: "Scanner" },
   { href: "/history", label: "History" },
 ];
 
 export function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled,        setIsScrolled]        = useState(false);
+  const [isMobileMenuOpen,  setIsMobileMenuOpen]  = useState(false);
   const pathname = usePathname();
-  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -34,14 +29,14 @@ export function Navbar() {
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "backdrop-blur-xl shadow-lg shadow-black/50"
-          : "bg-transparent"
+        isScrolled ? "backdrop-blur-xl shadow-lg shadow-black/50" : "bg-transparent"
       }`}
       style={isScrolled ? { background: "rgba(3,7,18,0.85)", borderBottom: "1px solid rgba(255,255,255,0.06)" } : {}}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
+
+          {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <motion.div
               whileHover={{ scale: 1.05, rotate: 5 }}
@@ -54,6 +49,7 @@ export function Navbar() {
             </span>
           </Link>
 
+          {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link
@@ -74,70 +70,34 @@ export function Navbar() {
             ))}
           </div>
 
-          <div className="hidden md:flex items-center gap-3">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={toggleTheme}
-              className="relative p-2.5 rounded-xl bg-white/8 text-slate-400 hover:bg-white/12 hover:text-white transition-colors border border-white/10"
-              aria-label="Toggle theme"
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                {theme === "light" ? (
-                  <motion.div
-                    key="sun"
-                    initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
-                    animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                    exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Sun className="w-4 h-4" />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="moon"
-                    initial={{ rotate: 90, opacity: 0, scale: 0.5 }}
-                    animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                    exit={{ rotate: -90, opacity: 0, scale: 0.5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Moon className="w-4 h-4" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
+          {/* Desktop CTA */}
+          <div className="hidden md:flex items-center">
             <Link
               href="/scan"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-primary-dark text-white font-medium rounded-full hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-white font-medium rounded-full transition-all duration-300 hover:scale-105"
+              style={{
+                background:  "linear-gradient(135deg,#2563EB,#06B6D4)",
+                boxShadow:   "0 0 20px rgba(37,99,235,0.4)",
+              }}
             >
               Start Scanning
             </Link>
           </div>
 
-          <div className="flex md:hidden items-center gap-2">
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={toggleTheme}
-              className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
-              aria-label="Toggle theme"
-            >
-              {theme === "light" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </motion.button>
+          {/* Mobile menu button */}
+          <div className="flex md:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/8 transition-colors"
               aria-label="Toggle menu"
             >
-              {isMobileMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
       </nav>
 
+      {/* Mobile menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -146,7 +106,7 @@ export function Navbar() {
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
             className="md:hidden border-t border-white/8"
-          style={{ background: "rgba(3,7,18,0.95)", backdropFilter: "blur(20px)" }}
+            style={{ background: "rgba(3,7,18,0.95)", backdropFilter: "blur(20px)" }}
           >
             <div className="px-4 py-4 space-y-2">
               {navLinks.map((link) => (
@@ -166,7 +126,8 @@ export function Navbar() {
               <Link
                 href="/scan"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block w-full text-center px-4 py-3 mt-4 bg-gradient-to-r from-primary to-primary-dark text-white font-medium rounded-lg"
+                className="block w-full text-center px-4 py-3 mt-2 text-white font-medium rounded-xl"
+                style={{ background: "linear-gradient(135deg,#2563EB,#06B6D4)" }}
               >
                 Start Scanning
               </Link>
