@@ -8,6 +8,8 @@ import {
   FileText,
   AlertCircle,
   FileUp,
+  Clipboard,
+  ClipboardCheck,
 } from "lucide-react";
 import { sampleTexts, getSampleById } from "@/lib/samples";
 
@@ -26,11 +28,25 @@ export function TextInput({
   maxLength = 10000,
   disabled = false,
 }: TextInputProps) {
-  const [isDragging, setIsDragging] = useState(false);
+  const [isDragging,    setIsDragging]    = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadError,   setUploadError]   = useState<string | null>(null);
+  const [pasted,        setPasted]        = useState(false);
+  const fileInputRef     = useRef<HTMLInputElement>(null);
   const tooltipTimeoutRef = useRef<NodeJS.Timeout>();
+
+  const handleClipboardPaste = useCallback(async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) {
+        onChange(text.slice(0, maxLength));
+        setPasted(true);
+        setTimeout(() => setPasted(false), 2000);
+      }
+    } catch {
+      // Clipboard access denied — silently ignore
+    }
+  }, [onChange, maxLength]);
 
   const characterCount = value.length;
   const isOverLimit = characterCount > maxLength;
@@ -185,6 +201,18 @@ export function TextInput({
         />
 
         <div className="absolute top-4 right-4 flex items-center gap-2">
+          {/* Clipboard paste button */}
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleClipboardPaste}
+            disabled={disabled}
+            title="Paste from clipboard"
+            className="p-2 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors border border-slate-200 dark:border-slate-600 disabled:opacity-50"
+          >
+            {pasted ? <ClipboardCheck className="w-5 h-5 text-green-500" /> : <Clipboard className="w-5 h-5" />}
+          </motion.button>
+
           <div className="relative">
             <input
               ref={fileInputRef}
