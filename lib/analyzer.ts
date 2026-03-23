@@ -19,17 +19,14 @@ export interface AnalysisResult {
   isDemo: boolean;
 }
 
-interface SaplingSentenceScore {
+interface SentenceScore {
   score: number;
   sentence: string;
 }
 
-interface SaplingResponse {
+interface GeminiResponse {
   score: number;
-  sentence_scores: SaplingSentenceScore[];
-  text: string;
-  token_probs?: number[];
-  tokens?: string[];
+  sentence_scores: SentenceScore[];
 }
 
 function generateId(): string {
@@ -157,8 +154,8 @@ function determineVerdict(overallScore: number): "human" | "mixed" | "ai" {
   return "ai";
 }
 
-function mapSaplingResponse(
-  data: SaplingResponse,
+function mapGeminiResponse(
+  data: GeminiResponse,
   originalText: string,
   wordCount: number,
   characterCount: number,
@@ -266,8 +263,8 @@ export async function analyzeText(text: string): Promise<AnalysisResult> {
     });
 
     if (response.ok) {
-      const data: SaplingResponse = await response.json();
-      return mapSaplingResponse(data, text, wordCount, characterCount, readingTime);
+      const data: GeminiResponse = await response.json();
+      return mapGeminiResponse(data, text, wordCount, characterCount, readingTime);
     }
 
     const errorData = await response.json().catch(() => null);
