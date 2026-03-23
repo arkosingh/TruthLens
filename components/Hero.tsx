@@ -33,18 +33,16 @@ export function Hero() {
       {/* ── Radial orbs ─────────────────────────────────── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <motion.div
-          style={{ scale: orbScale }}
+          style={{ scale: orbScale, background: "radial-gradient(circle, rgba(139,92,246,0.35) 0%, transparent 70%)" }}
           animate={{ opacity: [0.5, 0.75, 0.5] }}
           transition={{ duration: 8, repeat: Infinity }}
           className="absolute -top-52 -right-52 w-[700px] h-[700px] rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(139,92,246,0.35) 0%, transparent 70%)" }}
         />
         <motion.div
-          style={{ scale: orbScale }}
+          style={{ scale: orbScale, background: "radial-gradient(circle, rgba(6,182,212,0.25) 0%, transparent 70%)" }}
           animate={{ opacity: [0.3, 0.55, 0.3] }}
           transition={{ duration: 10, repeat: Infinity, delay: 2 }}
           className="absolute -bottom-72 -left-52 w-[900px] h-[900px] rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(6,182,212,0.25) 0%, transparent 70%)" }}
         />
         <motion.div
           animate={{ opacity: [0.15, 0.35, 0.15] }}
