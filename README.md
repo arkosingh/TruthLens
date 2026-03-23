@@ -1,6 +1,15 @@
 # TruthLens — AI Content Detector
 
-TruthLens is a Next.js application that detects AI-generated content with sentence-level precision. It uses [Sapling AI](https://sapling.ai) for real detection, with a built-in demo mode when no API key is configured.
+TruthLens is a Next.js web app that detects AI-generated text with sentence-level precision, powered by Google Gemini. Each sentence is individually scored and colour-highlighted so you can see exactly which parts of a document were written by AI.
+
+## Features
+
+- Sentence-level AI probability scoring
+- Overall AI confidence score with a visual ring
+- Colour-highlighted text (green → human, red → AI)
+- Scan history saved locally in the browser
+- Downloadable analysis report
+- Demo mode when no API key is configured
 
 ## Getting Started
 
@@ -9,51 +18,48 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Setting Up Real AI Detection
+## Configuration
 
-TruthLens uses [Sapling AI](https://sapling.ai) for real AI content detection. Without an API key, the app runs in **demo mode** with simulated results.
+TruthLens uses the [Google Gemini API](https://ai.google.dev) for AI detection. Without an API key it runs in **demo mode** with simulated results.
 
-### Get Your Free API Key
+### Get a free API key
 
-1. Go to [sapling.ai](https://sapling.ai) and create a free account
-2. Navigate to your dashboard → API Keys
-3. Copy your API key
+1. Go to [Google AI Studio](https://aistudio.google.com/apikey)
+2. Click **Create API key**
+3. Copy the key
 
-### Configure
+### Set up locally
 
-1. Copy the example env file:
-   ```bash
-   cp .env.local.example .env.local
-   ```
-2. Add your key to `.env.local`:
-   ```
-   SAPLING_API_KEY=your_key_here
-   ```
-3. Restart the dev server:
-   ```bash
-   npm run dev
-   ```
+```bash
+cp .env.local.example .env.local
+```
 
-### Free Tier Limits
+Add your key to `.env.local`:
 
-- The free tier includes a generous monthly quota
-- If no API key is configured, TruthLens runs in demo mode with simulated results
-- Max input per request: 200,000 characters
+```
+GEMINI_API_KEY=your_key_here
+```
+
+Restart the dev server:
+
+```bash
+npm run dev
+```
 
 ### Deploy on Vercel
 
-Add `SAPLING_API_KEY` as an environment variable in your Vercel project settings.
+Add `GEMINI_API_KEY` as an environment variable in your Vercel project **Settings → Environment Variables**, then redeploy.
 
 ## Tech Stack
 
-- [Next.js](https://nextjs.org) (App Router)
+- [Next.js 14](https://nextjs.org) (App Router)
 - [Tailwind CSS](https://tailwindcss.com)
 - [Framer Motion](https://www.framer.com/motion/)
-- [Sapling AI API](https://sapling.ai/docs) for AI detection
+- [Google Gemini API](https://ai.google.dev/docs)
+- [Lucide React](https://lucide.dev)
 
-## Learn More
+## License
 
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Sapling AI Documentation](https://sapling.ai/docs)
+MIT — see [LICENSE](LICENSE)

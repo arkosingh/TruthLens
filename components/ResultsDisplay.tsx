@@ -322,7 +322,7 @@ export function ResultsDisplay({ result, onNewScan }: ResultsDisplayProps) {
           {result.isDemo ? (
             <><FlaskConical className="w-3 h-3" /> Demo Mode</>
           ) : (
-            <><Sparkles className="w-3 h-3" /> Powered by Sapling AI</>
+            <><Sparkles className="w-3 h-3" /> Powered by Gemini AI</>
           )}
         </div>
         {isSaved && (
