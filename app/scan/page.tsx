@@ -20,7 +20,7 @@ import { LoginModal } from "@/components/LoginModal";
 import { useAuth } from "@/components/AuthContext";
 import { AnalysisResult, analyzeText } from "@/lib/analyzer";
 
-const CHAR_LIMIT_FOR_LOGIN = 500;
+const CHAR_LIMIT_FOR_LOGIN = 500; // characters
 const FILE_SIZE_LIMIT_FOR_LOGIN = 5 * 1024 * 1024; // 5MB
 
 type Mode = "detect" | "humanize";
