@@ -20,7 +20,7 @@ import { LoginModal } from "@/components/LoginModal";
 import { useAuth } from "@/components/AuthContext";
 import { AnalysisResult, analyzeText } from "@/lib/analyzer";
 
-const WORD_LIMIT_FOR_LOGIN = 500;
+const CHAR_LIMIT_FOR_LOGIN = 500;
 const FILE_SIZE_LIMIT_FOR_LOGIN = 5 * 1024 * 1024; // 5MB
 
 type Mode = "detect" | "humanize";
@@ -47,8 +47,8 @@ export default function ScanPage() {
   const requiresAuth = useCallback(
     (currentText: string) => {
       if (user) return false;
-      const wc = currentText.trim().split(/\s+/).filter((w) => w.length > 0).length;
-      if (wc > WORD_LIMIT_FOR_LOGIN) return true;
+      const charCount = currentText.length;
+      if (charCount > CHAR_LIMIT_FOR_LOGIN) return true;
       if (uploadedFileSize > FILE_SIZE_LIMIT_FOR_LOGIN) return true;
       return false;
     },
@@ -164,11 +164,8 @@ export default function ScanPage() {
   const isTextEmpty = text.trim().length === 0;
   const isTextTooLong = text.length > 200000;
 
-  const wordCount = text
-    .trim()
-    .split(/\s+/)
-    .filter((w) => w.length > 0).length;
-  const showLoginHint = !user && wordCount > WORD_LIMIT_FOR_LOGIN;
+  const charCount = text.length;
+  const showLoginHint = !user && charCount > CHAR_LIMIT_FOR_LOGIN;
 
   return (
     <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-sky-50 to-blue-50/50 dark:from-slate-900 dark:to-slate-800 transition-colors">
@@ -313,7 +310,7 @@ export default function ScanPage() {
               >
                 <Info className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                 <span className="text-blue-700 dark:text-blue-300">
-                  Your text exceeds 500 words. You&apos;ll need to{" "}
+                  Your text exceeds 500 characters. You&apos;ll need to{" "}
                   <button
                     onClick={() => setShowLoginModal(true)}
                     className="underline font-medium hover:text-blue-900 dark:hover:text-blue-100"
