@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useRef, useEffect, useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Download,
   RotateCcw,
@@ -14,6 +14,9 @@ import {
   XCircle,
   Sparkles,
   FlaskConical,
+  Wand2,
+  Copy,
+  CheckCheck,
 } from "lucide-react";
 import { AnalysisResult, getVerdictLabel, getVerdictColor } from "@/lib/analyzer";
 import { saveToHistory, generateReport } from "@/lib/storage";
@@ -29,6 +32,46 @@ interface ResultsDisplayProps {
 export function ResultsDisplay({ result, onNewScan }: ResultsDisplayProps) {
   const resultsRef = useRef<HTMLDivElement>(null);
   const [isSaved, setIsSaved] = useState(false);
+  const [isHumanizing, setIsHumanizing] = useState(false);
+  const [humanizedText, setHumanizedText] = useState<string | null>(null);
+  const [humanizeError, setHumanizeError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const handleHumanize = useCallback(async () => {
+    setIsHumanizing(true);
+    setHumanizeError(null);
+
+    try {
+      const response = await fetch("/api/humanize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: result.text }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.error || "Failed to humanize text.");
+      }
+
+      const data = await response.json();
+      setHumanizedText(data.humanizedText);
+    } catch (err) {
+      setHumanizeError(err instanceof Error ? err.message : "An error occurred.");
+    } finally {
+      setIsHumanizing(false);
+    }
+  }, [result.text]);
+
+  const handleCopyHumanized = useCallback(async () => {
+    if (!humanizedText) return;
+    try {
+      await navigator.clipboard.writeText(humanizedText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard access denied
+    }
+  }, [humanizedText]);
 
   useEffect(() => {
     saveToHistory(result);
@@ -285,6 +328,117 @@ export function ResultsDisplay({ result, onNewScan }: ResultsDisplayProps) {
         </p>
         <SentenceHighlight text={result.text} sentences={result.sentences} />
       </motion.div>
+
+      {/* Humanizer Section — shown when AI content is detected */}
+      {(result.verdict === "ai" || result.verdict === "mixed") && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.55 }}
+          className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl rounded-2xl p-6 sm:p-8 border border-white/20 dark:border-slate-700/50 shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500">
+                <Wand2 className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                  AI Text Humanizer
+                </h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  Rewrite AI-detected text to sound more naturally human
+                </p>
+              </div>
+            </div>
+            {!humanizedText && (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleHumanize}
+                disabled={isHumanizing}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-medium rounded-full hover:shadow-lg hover:shadow-violet-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isHumanizing ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Humanizing...
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="w-4 h-4" />
+                    Humanize Text
+                  </>
+                )}
+              </motion.button>
+            )}
+          </div>
+
+          <AnimatePresence>
+            {humanizeError && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 rounded-xl text-sm text-red-600 dark:text-red-400 mb-4"
+              >
+                {humanizeError}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {humanizedText && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+              >
+                <div className="relative mt-2">
+                  <div className="p-4 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl max-h-[400px] overflow-y-auto">
+                    <p className="text-slate-700 dark:text-slate-200 whitespace-pre-wrap leading-relaxed">
+                      {humanizedText}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 mt-3">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleCopyHumanized}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 font-medium rounded-full hover:border-violet-400 hover:text-violet-500 transition-all text-sm"
+                    >
+                      {copied ? (
+                        <>
+                          <CheckCheck className="w-4 h-4 text-green-500" />
+                          Copied!
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-4 h-4" />
+                          Copy Text
+                        </>
+                      )}
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => {
+                        setHumanizedText(null);
+                        handleHumanize();
+                      }}
+                      disabled={isHumanizing}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 font-medium rounded-full hover:border-violet-400 hover:text-violet-500 transition-all text-sm disabled:opacity-50"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      Regenerate
+                    </motion.button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      )}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

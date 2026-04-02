@@ -6,7 +6,12 @@ import { ScanSearch, Sparkles, Info } from "lucide-react";
 import { TextInput } from "@/components/TextInput";
 import { ScanButton } from "@/components/ScanButton";
 import { ResultsDisplay } from "@/components/ResultsDisplay";
+import { LoginModal } from "@/components/LoginModal";
+import { useAuth } from "@/components/AuthContext";
 import { AnalysisResult, analyzeText } from "@/lib/analyzer";
+
+const WORD_LIMIT_FOR_LOGIN = 500;
+const FILE_SIZE_LIMIT_FOR_LOGIN = 5 * 1024 * 1024; // 5MB
 
 export default function ScanPage() {
   const [text, setText] = useState("");
@@ -14,10 +19,29 @@ export default function ScanPage() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isDemo, setIsDemo] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [uploadedFileSize, setUploadedFileSize] = useState(0);
   const inputRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
+
+  const requiresAuth = useCallback(
+    (currentText: string) => {
+      if (user) return false;
+      const wordCount = currentText.trim().split(/\s+/).filter((w) => w.length > 0).length;
+      if (wordCount > WORD_LIMIT_FOR_LOGIN) return true;
+      if (uploadedFileSize > FILE_SIZE_LIMIT_FOR_LOGIN) return true;
+      return false;
+    },
+    [user, uploadedFileSize]
+  );
 
   const handleScan = useCallback(async () => {
     if (!text.trim()) return;
+
+    if (requiresAuth(text)) {
+      setShowLoginModal(true);
+      return;
+    }
 
     setIsAnalyzing(true);
     setError(null);
@@ -34,18 +58,30 @@ export default function ScanPage() {
     } finally {
       setIsAnalyzing(false);
     }
-  }, [text]);
+  }, [text, requiresAuth]);
 
   const handleNewScan = useCallback(() => {
     setResult(null);
     setError(null);
     setIsDemo(false);
     setText("");
+    setUploadedFileSize(0);
     inputRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
+  const handleTextChange = useCallback((newText: string) => {
+    setText(newText);
+  }, []);
+
+  const handleFileSize = useCallback((size: number) => {
+    setUploadedFileSize(size);
   }, []);
 
   const isTextEmpty = text.trim().length === 0;
   const isTextTooLong = text.length > 200000;
+
+  const wordCount = text.trim().split(/\s+/).filter((w) => w.length > 0).length;
+  const showLoginHint = !user && wordCount > WORD_LIMIT_FOR_LOGIN;
 
   return (
     <div className="min-h-screen pt-24 pb-16 bg-gradient-to-br from-sky-50 to-blue-50/50 dark:from-slate-900 dark:to-slate-800 transition-colors">
@@ -80,7 +116,8 @@ export default function ScanPage() {
         >
           <TextInput
             value={text}
-            onChange={setText}
+            onChange={handleTextChange}
+            onFileSize={handleFileSize}
             maxLength={200000}
             disabled={isAnalyzing}
           />
@@ -123,6 +160,29 @@ export default function ScanPage() {
             )}
           </AnimatePresence>
 
+          <AnimatePresence>
+            {showLoginHint && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/40 rounded-xl text-sm flex items-start gap-2"
+              >
+                <Info className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                <span className="text-blue-700 dark:text-blue-300">
+                  Your text exceeds 500 words. You&apos;ll need to{" "}
+                  <button
+                    onClick={() => setShowLoginModal(true)}
+                    className="underline font-medium hover:text-blue-900 dark:hover:text-blue-100"
+                  >
+                    sign in
+                  </button>{" "}
+                  to analyze it.
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
               <Sparkles className="w-4 h-4 text-accent" />
@@ -150,6 +210,11 @@ export default function ScanPage() {
           )}
         </AnimatePresence>
       </div>
+
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
     </div>
   );
 }

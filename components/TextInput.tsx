@@ -16,6 +16,7 @@ import { sampleTexts, getSampleById } from "@/lib/samples";
 interface TextInputProps {
   value: string;
   onChange: (value: string) => void;
+  onFileSize?: (size: number) => void;
   maxLength?: number;
   disabled?: boolean;
 }
@@ -25,6 +26,7 @@ const MAX_FILE_SIZE = 1024 * 1024;
 export function TextInput({
   value,
   onChange,
+  onFileSize,
   maxLength = 10000,
   disabled = false,
 }: TextInputProps) {
@@ -54,6 +56,7 @@ export function TextInput({
   const handleFileUpload = useCallback(
     (file: File) => {
       setUploadError(null);
+      onFileSize?.(file.size);
 
       if (file.size > MAX_FILE_SIZE) {
         setUploadError("File too large. Max size is 1MB.");
@@ -83,7 +86,7 @@ export function TextInput({
       };
       reader.readAsText(file);
     },
-    [maxLength, onChange]
+    [maxLength, onChange, onFileSize]
   );
 
   useEffect(() => {
