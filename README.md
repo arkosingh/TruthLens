@@ -2,6 +2,8 @@
 
 TruthLens is a Next.js web app that detects AI-generated text with sentence-level precision, powered by Google Gemini. Each sentence is individually scored and colour-highlighted so you can see exactly which parts of a document were written by AI.
 
+<!-- Trigger redeploy -->
+
 ## Features
 
 - Sentence-level AI probability scoring
