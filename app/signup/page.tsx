@@ -92,7 +92,7 @@ export default function SignUpPage() {
           <p className="text-slate-400 text-sm">
             Already have an account?{" "}
             <Link href="/scan" className="text-primary hover:text-primary-light transition-colors font-medium">
-              Sign in
+              Sign in here
             </Link>
           </p>
         </div>
@@ -108,7 +108,7 @@ export default function SignUpPage() {
         >
           {/* Card */}
           <div className="glass-effect rounded-2xl p-8 sm:p-10 border border-white/10 backdrop-blur-xl bg-white/5">
-            {/* Header - Auto-deploy trigger */}
+            {/* Header */}
             <div className="text-center mb-8">
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
@@ -122,7 +122,7 @@ export default function SignUpPage() {
                 Create Account
               </h1>
               <p className="text-slate-400">
-                Join TruthLens to analyze documents with AI
+                Join TruthLens to analyze documents with AI — powered by advanced detection
               </p>
             </div>
 
