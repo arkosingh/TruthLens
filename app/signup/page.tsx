@@ -46,7 +46,7 @@ export default function SignUpPage() {
     if (error) {
       setError(error);
     } else {
-      setSuccessMessage("Account created successfully! Check your email for a confirmation link.");
+      setSuccessMessage("Account created successfully! You can now sign in.");
       setName("");
       setEmail("");
       setPassword("");
