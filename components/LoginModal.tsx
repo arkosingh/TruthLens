@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Mail, Lock, LogIn, UserPlus, AlertCircle } from "lucide-react";
 import { useAuth } from "./AuthContext";
@@ -230,15 +231,25 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
               <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
                 {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
-                <button
-                  onClick={() => {
-                    setIsSignUp(!isSignUp);
-                    resetForm();
-                  }}
-                  className="text-primary hover:underline font-medium"
-                >
-                  {isSignUp ? "Sign in" : "Sign up"}
-                </button>
+                {isSignUp ? (
+                  <button
+                    onClick={() => {
+                      setIsSignUp(false);
+                      resetForm();
+                    }}
+                    className="text-primary hover:underline font-medium"
+                  >
+                    Sign in
+                  </button>
+                ) : (
+                  <Link
+                    href="/signup"
+                    onClick={onClose}
+                    className="text-primary hover:underline font-medium"
+                  >
+                    Sign up
+                  </Link>
+                )}
               </p>
             </div>
           </motion.div>

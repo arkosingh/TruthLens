@@ -71,7 +71,13 @@ export function Navbar() {
           </div>
 
           {/* Desktop CTA */}
-          <div className="hidden md:flex items-center">
+          <div className="hidden md:flex items-center gap-3">
+            <Link
+              href="/signup"
+              className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors"
+            >
+              Sign Up
+            </Link>
             <Link
               href="/scan"
               className="inline-flex items-center gap-2 px-5 py-2.5 text-white font-medium rounded-full transition-all duration-300 hover:scale-105"
@@ -123,6 +129,13 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
+              <Link
+                href="/signup"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block px-4 py-3 text-slate-400 hover:bg-white/8 hover:text-white rounded-lg text-base font-medium transition-colors"
+              >
+                Sign Up
+              </Link>
               <Link
                 href="/scan"
                 onClick={() => setIsMobileMenuOpen(false)}
