@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Lock, User, AlertCircle, CheckCircle2, ArrowRight, ScanSearch, Sparkles } from "lucide-react";
+import { Mail, Lock, User, AlertCircle, CheckCircle2, ArrowRight, Sparkles } from "lucide-react";
 import { useAuth } from "@/components/AuthContext";
 import { FloatingShapes } from "@/components/FloatingShapes";
 
@@ -143,30 +143,6 @@ export default function SignUpPage() {
       <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-[120px]" />
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/20 rounded-full blur-[120px]" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet/10 rounded-full blur-[150px]" />
-
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <motion.div
-              whileHover={{ scale: 1.05, rotate: 5 }}
-              className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent"
-            >
-              <ScanSearch className="w-5 h-5 text-white" />
-            </motion.div>
-            <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              TruthLens
-            </span>
-          </Link>
-          
-          <p className="text-slate-400 text-sm">
-            Already have an account?{" "}
-            <Link href="/scan" className="text-primary hover:text-primary-light transition-colors font-medium">
-              Sign in here
-            </Link>
-          </p>
-        </div>
-      </nav>
 
       {/* Main Content */}
       <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-24">
