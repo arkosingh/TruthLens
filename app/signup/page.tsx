@@ -108,7 +108,7 @@ export default function SignUpPage() {
         >
           {/* Card */}
           <div className="glass-effect rounded-2xl p-8 sm:p-10 border border-white/10 backdrop-blur-xl bg-white/5">
-            {/* Header */}
+            {/* Header - Auto-deploy trigger */}
             <div className="text-center mb-8">
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
