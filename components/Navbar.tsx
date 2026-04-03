@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ScanSearch, Menu, X } from "lucide-react";
+import { ScanSearch, Menu, X, User, LogOut } from "lucide-react";
+import { useAuth } from "./AuthContext";
 
 const navLinks = [
   { href: "/",        label: "Home"    },
@@ -16,6 +17,7 @@ export function Navbar() {
   const [isScrolled,        setIsScrolled]        = useState(false);
   const [isMobileMenuOpen,  setIsMobileMenuOpen]  = useState(false);
   const pathname = usePathname();
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -72,22 +74,52 @@ export function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <Link
-              href="/signup"
-              className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors"
-            >
-              Sign Up
-            </Link>
-            <Link
-              href="/scan"
-              className="inline-flex items-center gap-2 px-5 py-2.5 text-white font-medium rounded-full transition-all duration-300 hover:scale-105"
-              style={{
-                background:  "linear-gradient(135deg,#2563EB,#06B6D4)",
-                boxShadow:   "0 0 20px rgba(37,99,235,0.4)",
-              }}
-            >
-              Start Scanning
-            </Link>
+            {user ? (
+              <>
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+                  {user.user_metadata?.avatar_url ? (
+                    <img
+                      src={user.user_metadata.avatar_url}
+                      alt="Profile"
+                      className="w-7 h-7 rounded-full"
+                    />
+                  ) : (
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                      <User className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+                  <span className="text-sm text-slate-300 max-w-[120px] truncate">
+                    {user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'User'}
+                  </span>
+                </div>
+                <button
+                  onClick={signOut}
+                  className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                  title="Sign out"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/signup"
+                  className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors"
+                >
+                  Sign Up
+                </Link>
+                <Link
+                  href="/scan"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 text-white font-medium rounded-full transition-all duration-300 hover:scale-105"
+                  style={{
+                    background:  "linear-gradient(135deg,#2563EB,#06B6D4)",
+                    boxShadow:   "0 0 20px rgba(37,99,235,0.4)",
+                  }}
+                >
+                  Start Scanning
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -129,22 +161,57 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <Link
-                href="/signup"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-4 py-3 text-slate-400 hover:bg-white/8 hover:text-white rounded-lg text-base font-medium transition-colors"
-              >
-                Sign Up
-              </Link>
-              <Link
-                href="/scan"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block w-full text-center px-4 py-3 mt-2 text-white font-medium rounded-xl"
-                style={{ background: "linear-gradient(135deg,#2563EB,#06B6D4)" }}
-              >
-                Start Scanning
-              </Link>
-            </div>
+              {user ? (
+                <>
+                  <div className="flex items-center gap-3 px-4 py-3 border-t border-white/10 mt-2">
+                    {user.user_metadata?.avatar_url ? (
+                      <img
+                        src={user.user_metadata.avatar_url}
+                        alt="Profile"
+                        className="w-8 h-8 rounded-full"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                        <User className="w-4 h-4 text-white" />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <p className="text-sm text-white font-medium">
+                        {user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'User'}
+                      </p>
+                      <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      signOut();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="flex items-center gap-2 w-full px-4 py-3 text-slate-400 hover:bg-white/8 hover:text-white rounded-lg text-base font-medium transition-colors"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/signup"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block px-4 py-3 text-slate-400 hover:bg-white/8 hover:text-white rounded-lg text-base font-medium transition-colors"
+                  >
+                    Sign Up
+                  </Link>
+                  <Link
+                    href="/scan"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block w-full text-center px-4 py-3 mt-2 text-white font-medium rounded-xl"
+                    style={{ background: "linear-gradient(135deg,#2563EB,#06B6D4)" }}
+                  >
+                    Start Scanning
+                  </Link>
+                </>
+              )}
           </motion.div>
         )}
       </AnimatePresence>
