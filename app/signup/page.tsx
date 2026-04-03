@@ -1,26 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { Mail, Lock, User, AlertCircle, CheckCircle2, ArrowRight, ScanSearch } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { Mail, Lock, User, AlertCircle, CheckCircle2, ArrowRight, ScanSearch, Sparkles } from "lucide-react";
 import { useAuth } from "@/components/AuthContext";
 import { FloatingShapes } from "@/components/FloatingShapes";
 
 export default function SignUpPage() {
-  const { signUpWithEmail, signInWithGoogle } = useAuth();
+  const { signUpWithEmail, signInWithGoogle, user } = useAuth();
+  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      router.push("/scan");
+    }
+  }, [user, router]);
+
+  // Auto-redirect after success
+  useEffect(() => {
+    if (isSuccess) {
+      const timer = setTimeout(() => {
+        router.push("/");
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [isSuccess, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setSuccessMessage(null);
     setLoading(true);
 
     // Validation
@@ -46,11 +64,7 @@ export default function SignUpPage() {
     if (error) {
       setError(error);
     } else {
-      setSuccessMessage("Account created successfully! You can now sign in.");
-      setName("");
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
+      setIsSuccess(true);
     }
 
     setLoading(false);
@@ -63,6 +77,62 @@ export default function SignUpPage() {
       setError(error);
     }
   };
+
+  // Show success screen
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen bg-[#030712] relative overflow-hidden flex items-center justify-center">
+        <FloatingShapes />
+        
+        {/* Gradient Orbs */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-success/20 rounded-full blur-[120px]" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/20 rounded-full blur-[120px]" />
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="relative z-10 text-center px-4"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-success to-primary mb-6"
+          >
+            <Sparkles className="w-12 h-12 text-white" />
+          </motion.div>
+          
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-4xl font-bold text-white mb-4"
+          >
+            Welcome to TruthLens!
+          </motion.h1>
+          
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-xl text-slate-400 mb-8"
+          >
+            Your account has been created successfully
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="flex items-center justify-center gap-2 text-slate-500"
+          >
+            <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+            Redirecting you to home...
+          </motion.div>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#030712] relative overflow-hidden">
@@ -238,30 +308,19 @@ export default function SignUpPage() {
               </div>
 
               {/* Error Message */}
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="flex items-center gap-2 p-3 bg-danger/10 border border-danger/20 rounded-xl text-sm text-danger"
-                >
-                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                  {error}
-                </motion.div>
-              )}
-
-              {/* Success Message */}
-              {successMessage && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="flex items-center gap-2 p-3 bg-success/10 border border-success/20 rounded-xl text-sm text-success"
-                >
-                  <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-                  {successMessage}
-                </motion.div>
-              )}
+              <AnimatePresence>
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="flex items-center gap-2 p-3 bg-danger/10 border border-danger/20 rounded-xl text-sm text-danger"
+                  >
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    {error}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* Submit Button */}
               <motion.button
